@@ -154,4 +154,8 @@ To run the application from an IDE instead of Docker, follow these steps:
 - **Docker Considerations**: Docker Compose is used to simplify deployment and ensure that all services are correctly networked. Ensure no conflicts on ports used by the services (e.g., 3000 for frontend, specific backend ports as configured).
 
 ### Screenshots
-
+![User](webimg/user.png)
+![Device](webimg/device.png)
+![Devices](webimg/devices.png)
+![Stats](webimg/stats.png)
+![Chat](webimg/chat.png)
