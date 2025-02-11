@@ -4,6 +4,30 @@
 
 The Energy Management System (EMS) is designed to facilitate effective management of users and their smart energy metering devices. This system enables users to monitor and manage their energy consumption, promoting efficient energy use across various locations. Also has an chat system between users and administrators. The EMS includes a user-friendly frontend and a distributed backend with four primary microservices.
 
+## Functionalities Overview
+
+### Administrator Functionalities
+- **User Management**: Full control to create, edit, and delete user accounts.
+- **Device Management**: Perform CRUD operations on energy metering devices and manage their association with users.
+
+### Client Functionalities
+- **Device Viewing**: Clients can view and monitor real-time and historical data for their devices.
+
+### Communication and Alerts
+- **Chat System**: Facilitates real-time communication between users and administrators.
+- **Automated Alerts**: Notifications for energy consumption thresholds and system health.
+
+### Monitoring and Control
+- **Monitoring Microservice**: Offers real-time and historical data analysis, integrated with WebSocket for instant notifications.
+- **Device Simulator**: Simulates device data for testing and monitoring system performance.
+
+### Security Features
+- **Role-Based Access Control (RBAC)**: Manages user access based on roles using Spring Security, ensuring that users can only access appropriate system functions.
+- **Data Security**: Implements Spring Security for authentication and authorization, protecting sensitive information with encryption and secure data storage practices.
+
+### Deployment and Maintenance
+- **Docker Integration**: Utilizes Docker for scalable and manageable deployment of services.
+
 ## Build and Execution Considerations
 
 ### Prerequisites
@@ -128,3 +152,6 @@ To run the application from an IDE instead of Docker, follow these steps:
 
 - **User Roles**: The system supports multiple roles, such as administrators (who have CRUD access to users and devices) and regular users (who can manage their own devices).
 - **Docker Considerations**: Docker Compose is used to simplify deployment and ensure that all services are correctly networked. Ensure no conflicts on ports used by the services (e.g., 3000 for frontend, specific backend ports as configured).
+
+### Screenshots
+
