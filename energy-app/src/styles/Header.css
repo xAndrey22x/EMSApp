@@ -1,0 +1,98 @@
+.custom-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #3b8751 !important;
+  padding: 0 24px;
+}
+
+.custom-menu {
+  background-color: #3b8751 !important;
+  display: flex;
+  align-items: center;
+  border-bottom: none !important;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.custom-menu .ant-menu-item {
+  color: white !important;
+  font-weight: 500;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.custom-menu .ant-menu-item:hover,
+.custom-menu .ant-menu-item-selected {
+  color: #d4f3e1 !important;
+  background-color: #2e6d42 !important;
+}
+
+.logout-button {
+  background-color: #2b623a !important;
+  border-color: #2b623a !important;
+  color: white !important;
+  font-weight: 500;
+}
+
+.logout-button:hover {
+  background-color: #256c3a !important;
+  border-color: #256c3a !important;
+}
+
+.custom-logout-modal .ant-btn-primary {
+  background-color: #2b623a !important;
+  border-color: #2b623a !important;
+}
+
+.custom-logout-modal .ant-btn-primary:hover {
+  background-color: #256c3a !important;
+  border-color: #256c3a !important;
+}
+
+.custom-logout-modal .ant-btn-default:hover {
+  border-color: #256c3a !important;
+  color: #256c3a !important;
+}
+
+.custom-logout-modal .ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #2b623a !important;
+  border-color: #2b623a !important;
+}
+
+.ant-input,
+.ant-input-password,
+.ant-input-number,
+.ant-select-selector {
+  border-color: #3b8751 !important;
+}
+
+.ant-input:focus,
+.ant-input-password:focus,
+.ant-input-number:focus,
+.ant-select-selector:hover,
+.ant-select-selector:focus {
+  border-color: #3b8751 !important;
+  box-shadow: 0 0 0 2px rgba(59, 135, 81, 0.2) !important;
+}
+
+.header-title {
+  color: #ffffff !important;
+  font-weight: bold !important;
+  margin: 0 auto;
+  margin-top: 10px;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
+.scrollable-dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

@@ -1,0 +1,28 @@
+.owned-by {
+  display: flex;
+  align-items: center;
+}
+
+.owned-by-icon {
+  margin-right: 5px;
+}
+
+.owned-by-name {
+  font-weight: bold;
+}
+
+.not-owned {
+  color: #a0a0a0;
+  font-style: italic;
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+.edit-owner-button {
+  margin-left: 8px;
+  color: #1890ff;
+}
+
+.select-label {
+  display: block;
+}

@@ -1,0 +1,178 @@
+networks:
+  shared-network:
+    driver: bridge
+
+volumes:
+  traefik-log:
+    driver: local
+
+services:
+  reverse-proxy:
+    image: traefik:v3.2
+    command:
+      - --api.insecure=true
+      - --providers.docker
+      - --accesslog=true
+      - --accesslog.filepath=/var/log/traefik/access.log
+      - --log.level=DEBUG
+      - --entrypoints.web.address=:80
+    ports:
+      - "80:80"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - traefik-log:/var/log/traefik
+    networks:
+      - shared-network
+  energyuser:
+    build:
+      context: ./energyuser
+    image: energyuser:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db1:5432/user-db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - EXTERNAL_SERVICE_BASE_URL=http://reverse-proxy/energydevice
+    depends_on:
+      - db1
+    # ports:
+    #   - "8080:8080"
+    deploy:
+      replicas: 4
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.energyuser.rule=Host(`api.localhost`) && PathPrefix(`/energyuser`)"
+      - "traefik.http.services.energyuser.loadbalancer.server.port=8083"
+    networks:
+      - shared-network
+
+  energydevice:
+    build:
+      context: ./energydevice
+    image: energydevice:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db2:5432/device-db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - db2
+    # ports:
+    #   - "8081:8081"
+    deploy:
+      replicas: 4
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.energydevice.rule=Host(`api.localhost`) && PathPrefix(`/energydevice`)"
+      - "traefik.http.routers.energydevice-internal.rule=PathPrefix(`/energydevice`)"
+      - "traefik.http.services.energydevice.loadbalancer.server.port=8081"
+    networks:
+      - shared-network
+
+  energymonitoring:
+    build:
+      context: ./energymonitoring
+    image: energymonitoring:latest
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db3:5432/monitoring-db
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    depends_on:
+      - db3
+    # ports:
+    #   - "8082:8082"
+    deploy:
+      replicas: 1
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.energymonitoring.rule=Host(`api.localhost`) && PathPrefix(`/energymonitoring/ws`)"
+      - "traefik.http.services.energymonitoring.loadbalancer.server.port=8082"
+      - "traefik.http.middlewares.websocket.headers.customrequestheaders.Upgrade=websocket"
+      - "traefik.http.middlewares.websocket.headers.customrequestheaders.Connection=Upgrade"
+      - "traefik.http.routers.energymonitoring.middlewares=websocket"
+    networks:
+      - shared-network
+
+  energychat:
+    build:
+      context: ./energyChat
+    image: energychat:latest
+    # ports:
+    #   - "8084:8084"
+    deploy:
+      replicas: 1
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.energychat.rule=Host(`api.localhost`) && PathPrefix(`/energychat/ws`)"
+      - "traefik.http.services.energychat.loadbalancer.server.port=8084"
+      - "traefik.http.middlewares.websocket.headers.customrequestheaders.Upgrade=websocket"
+      - "traefik.http.middlewares.websocket.headers.customrequestheaders.Connection=Upgrade"
+      - "traefik.http.routers.energychat.middlewares=websocket"
+    networks:
+      - shared-network
+
+  db1:
+    image: postgres:15
+    container_name: db1
+    environment:
+      - POSTGRES_DB=user-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - shared-network
+
+  db2:
+    image: postgres:15
+    container_name: db2
+    environment:
+      - POSTGRES_DB=device-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5433:5432"
+    networks:
+      - shared-network
+
+  db3:
+    image: postgres:15
+    container_name: db3
+    environment:
+      - POSTGRES_DB=monitoring-db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5434:5432"
+    networks:
+      - shared-network
+
+  energy-app:
+    build:
+      context: ./energy-app
+      args:
+        REACT_APP_USER_API_URL: http://api.localhost/energyuser
+        REACT_APP_DEVICE_API_URL: http://api.localhost/energydevice
+        REACT_APP_MONITORING_WS_URL: ws://api.localhost/energymonitoring/ws
+        REACT_APP_CHAT_WS_URL: ws://api.localhost/energychat/ws
+    image: energy-app:latest
+    container_name: energy-app
+    depends_on:
+      - energyuser
+      - energydevice
+      - energymonitoring
+      - energychat
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.energy-app.rule=Host(`energy-app.localhost`)"
+      - "traefik.http.services.energy-app.loadbalancer.server.port=80"
+    networks:
+      - shared-network
+  devicesimulator:
+    build:
+      context: ./devicesimulator
+    image: devicesimulator:latest
+    container_name: devicesimulator
+    profiles:
+      - manual
+    labels:
+      - "traefik.enable=false"
